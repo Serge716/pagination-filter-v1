@@ -1,9 +1,11 @@
 var allStudents = document.querySelectorAll(".student-item");
+var studentsList = allStudents;
 var mainDiv = document.getElementsByTagName("div")[0];
 var studentsPerPage = 10;
 var numberOfPages = Math.ceil(allStudents.length / studentsPerPage);
 var header = document.querySelector(".page-header");
 var searchButton;
+var searchInput;
 
 //Create a list items for the pages numbers
 var addPages = function() {
@@ -34,11 +36,11 @@ var hideStudents = function() {
   }
 }
 
-var displayStudents = function() {
+var displayStudents = function(students) {
   var activePage = document.getElementsByTagName("a")[0]
   activePage.classList.add("active");
-  for (var i = studentsPerPage; i < allStudents.length; i += 1) {
-    allStudents[i].hidden = true;
+  for (var i = studentsPerPage; i < students.length; i += 1) {
+    students[i].hidden = true;
   }
 
   pageButtons = document.querySelectorAll("a");
@@ -93,41 +95,73 @@ var addSearchButton = function() {
   addDiv.appendChild(addInput);
   addDiv.appendChild(addButton);
   header.appendChild(addDiv);
-  searchButton = header.querySelector("button"); 
+  searchButton = header.querySelector("button");
+  searchInput = header.querySelector("input");
 }
 
 var searchForStudents = function() {
+  searchButton.addEventListener("click", resetAllStudents());
   //Hide all students
   hideStudents();
-
-  var getInputValue = document.getElementsByTagName("input")[0];
+  //var mainDiv;
   var collectStudents = [];
+  var studentsFound = 0;
+  var getInputValue = document.getElementsByTagName("input")[0];
+  var mainDiv = document.querySelector(".page");
+  var noMatch = document.querySelector("h2");
   //Cycle through all students and if they match the input value show
   for (var i = 0; i < allStudents.length; i += 1) {
     console.log(allStudents.innerText);
 
     if ( allStudents[i].innerText.toLowerCase().indexOf(getInputValue.value.toLowerCase()) > -1 ) {
+      // mainDiv = document.querySelector(".page");
       for (var j = 0; j < allStudents.length; j += 1) {
         allStudents[i].hidden = false;
-        collectStudents.push(allStudents[i]);
       }
+      studentsFound += 1;
+      collectStudents.push(allStudents[i]);
     }
+  }
+  mainDiv.removeChild(mainDiv.lastChild); 
+  console.log(collectStudents.length);
+  if (collectStudents.length > 0) {
+    numberOfPages = Math.ceil(collectStudents.length / studentsPerPage)
+    // mainDiv.removeChild(mainDiv.lastChild); 
+    addPages();
+
+    allStudents = collectStudents;
+    displayStudents(allStudents);
+  } else {
+    noMatch.innerText = "No Matches";
   }
 }
 
+var resetAllStudents = function() {
+  return allStudents = studentsList;
+}
+
 addPages();
-displayStudents();
+displayStudents(allStudents);
 addSearchButton();
 searchButton.addEventListener("click", searchForStudents);
 
 
+// var searchForStudents = function() {
+//   //Hide all students
+//   hideStudents();
 
+//   var getInputValue = document.getElementsByTagName("input")[0];
+//   var collectStudents = [];
+//   //Cycle through all students and if they match the input value show
+//   for (var i = 0; i < allStudents.length; i += 1) {
+//     console.log(allStudents.innerText);
 
-
-
-
-
-
-
-
-
+//     if ( allStudents[i].innerText.toLowerCase().indexOf(getInputValue.value.toLowerCase()) > -1 ) {
+//       for (var j = 0; j < allStudents.length; j += 1) {
+//         allStudents[i].hidden = false;
+//         collectStudents.push(allStudents[i]);
+//       }
+//     }
+//     searchButton.addEventListener("click", searchForStudents);
+//   }
+// }
